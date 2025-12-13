@@ -89,23 +89,21 @@ lvgl:
       border_opa: TRANSP
       pad_top: 30
       pad_left: 0
-      pad_right: 0
+                    text: "Roller Shutter 1"
       radius: 0
       width: 192
       height: 100%
 
-    - id: nav_btn_container
+                    clickable: true
       bg_opa: TRANSP
       border_opa: TRANSP
       width: 180
       height: 150
 
     - id: nav_btn_inactivate
-      bg_opa: TRANSP
-      align: CENTER
-      width: 112
-      height: 64
-      radius: 48
+                      - label:
+                          styles: card_md_icon_btn
+                          text_font: extra_icon
       border_opa: TRANSP
       shadow_opa: TRANSP
 
