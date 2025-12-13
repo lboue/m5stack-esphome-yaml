@@ -89,21 +89,23 @@ lvgl:
       border_opa: TRANSP
       pad_top: 30
       pad_left: 0
-                    text: "Roller Shutter 1"
+      pad_right: 0
       radius: 0
       width: 192
       height: 100%
 
-                    clickable: true
+    - id: nav_btn_container
       bg_opa: TRANSP
       border_opa: TRANSP
       width: 180
       height: 150
 
     - id: nav_btn_inactivate
-                      - label:
-                          styles: card_md_icon_btn
-                          text_font: extra_icon
+      bg_opa: TRANSP
+      align: CENTER
+      width: 112
+      height: 64
+      radius: 48
       border_opa: TRANSP
       shadow_opa: TRANSP
 
@@ -217,7 +219,7 @@ lvgl:
       
     - id: card_lg_sub_label
       text_font: montserrat_24
-    
+      
     
     - id: climate_control_bg
       bg_opa: COVER
