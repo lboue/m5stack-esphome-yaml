@@ -55,6 +55,8 @@ font:
       "\U000F0374", # mdi:minus
       "\U000F00DF", # mdi:brightness-6
       "\U000F03D8", # mdi:color-palette
+      "\U000F024D", # mdi:window-shutter
+      "\U000F0F7D", # mdi:pause
     ]
 
   # larger icon
@@ -316,6 +318,35 @@ lvgl:
                       id: light_btn_label
                       text: "Light"
 
+            # Cover (Roller shutter) icon button
+            - obj:
+                styles: nav_btn_container
+                widgets:
+                  - button:
+                      align: CENTER
+                      styles: nav_btn_inactivate
+                      id: cover_panel_btn
+                      checkable: true
+                      state:
+                        checked: false
+                      checked:
+                        bg_color: 0xCCE8E7
+                      widgets:
+                        - label:
+                            align: CENTER
+                            id: cover_btn_icon
+                            styles: nav_icon_inactivate
+                            text: "\U000F024D" # mdi:window-shutter
+                      on_value:
+                        - lambda: id(page_num) = 2;
+                        - script.execute: nav_rail_update
+                      on_press:
+                        - lvgl.page.show: cover_page
+                  - label:
+                      styles: nav_label_inactivate
+                      id: cover_btn_label
+                      text: "Cover"
+
             # Climate (Temp/Humi/AC) icon button
             - obj:
                 styles: nav_btn_container
@@ -336,7 +367,7 @@ lvgl:
                             styles: nav_icon_inactivate
                             text: "\U000F0F55" # mid:air-thermometer-outline
                       on_value:
-                        - lambda: id(page_num) = 2;
+                        - lambda: id(page_num) = 3;
                         - script.execute: nav_rail_update
                       on_press:
                         - lvgl.page.show: climate_page
@@ -797,6 +828,139 @@ lvgl:
                                     lv_dropdown_get_selected_str(id(fan_mode_dd).obj, fan_mode_buf, sizeof(fan_mode_buf));
                                     return std::string(fan_mode_buf);
                               - lambda: id(set_ac_fan_mode)->execute(x);
+      - obj:
+          align: CENTER
+          id: cover_modal_container
+          styles: modal_container
+          clickable: true
+          hidden: true # default hidden
+          on_press:
+            - lvgl.widget.hide: cover_modal_container
+          widgets:
+            - obj:
+                styles: card_lg
+                widgets:
+                  # close button
+                  - button:
+                      styles: card_lg_icon_btn_transp
+                      align: TOP_LEFT
+                      widgets:
+                        - label:
+                            text_color: 0x3F4948
+                            text_font: extra_icon
+                            text: "\U000F0156"
+                            align: CENTER
+                      on_press:
+                        - lvgl.widget.hide: cover_modal_container
+                  - label:
+                      text_font: montserrat_48
+                      align: TOP_MID
+                      y: 30
+                      text: "Cover Control"
+                  # Cover position slider
+                  - slider:
+                      align: CENTER
+                      width: 130
+                      height: 360
+                      radius: 42
+                      min_value: 0
+                      max_value: 100
+                      id: cover_slider
+                      bg_color: 0xECECEC # Default inactivate color
+                      bg_opa: COVER
+                      indicator:
+                        radius: 12
+                        bg_color: 0x5B8DBF
+                      knob:
+                        bg_opa: TRANSP
+                      on_boot:
+                        - lambda: |-
+                            lv_obj_move_foreground(id(cover_slider));
+                      on_release:
+                        - homeassistant.action:
+                            action: cover.set_cover_position
+                            data:
+                              entity_id: cover.living_room_cover
+                              position: !lambda return int(x);
+                        - lvgl.label.update:
+                            id: cover_position_label
+                            text: !lambda |-
+                              return std::to_string(int(x)) + " %";
+                  - label:
+                      id: cover_position_label
+                      text_font: montserrat_48
+                      align: CENTER
+                      y: 80
+                      text: "0 %"
+                  # Button group
+                  - obj:
+                      width: 280
+                      height: 84
+                      radius: 50
+                      scrollable: false
+                      align: BOTTOM_MID
+                      bg_color: 0xF3F4F4
+                      border_opa: TRANSP
+                      layout:
+                        type: flex
+                        flex_align_main: CENTER
+                        flex_align_cross: CENTER
+                        flex_align_track: CENTER
+                      widgets:
+                        - button:
+                            id: cover_open_btn
+                            styles: card_md_icon_btn
+                            bg_opa: TRANSP
+                            width: 72
+                            height: 72
+                            widgets:
+                              - label:
+                                  text_color: 0x3F4948
+                                  text_font: extra_icon
+                                  text: "\U000F0415"
+                                  align: CENTER
+                            on_short_click:
+                              - logger.log: "Open the cover!"
+                              - homeassistant.action:
+                                  action: cover.open_cover
+                                  data:
+                                    entity_id: cover.living_room_cover
+                        - button:
+                            id: cover_stop_btn
+                            styles: card_md_icon_btn
+                            bg_opa: TRANSP
+                            width: 72
+                            height: 72
+                            widgets:
+                              - label:
+                                  text_color: 0x3F4948
+                                  text_font: extra_icon
+                                  text: "\U000F0F7D"
+                                  align: CENTER
+                            on_short_click:
+                              - logger.log: "Stop the cover!"
+                              - homeassistant.action:
+                                  action: cover.stop_cover
+                                  data:
+                                    entity_id: cover.living_room_cover
+                        - button:
+                            id: cover_close_btn
+                            styles: card_md_icon_btn
+                            bg_opa: TRANSP
+                            width: 72
+                            height: 72
+                            widgets:
+                              - label:
+                                  text_color: 0x3F4948
+                                  text_font: extra_icon
+                                  text: "\U000F0374"
+                                  align: CENTER
+                            on_short_click:
+                              - logger.log: "Close the cover!"
+                              - homeassistant.action:
+                                  action: cover.close_cover
+                                  data:
+                                    entity_id: cover.living_room_cover
   pages:
     - id: dashboard_page
       widgets:
@@ -1091,3 +1255,47 @@ lvgl:
             y: 40
             text_font: montserrat_48
             text: "Climate" 
+
+    - id: cover_page
+      widgets:
+        - obj:
+            styles: content_container
+            layout:
+              type: grid
+              grid_rows: [fr(10), fr(40), fr(10), fr(40)]
+              grid_columns: [fr(1), fr(1)]
+              pad_row: 24
+              pad_column: 24
+            widgets:
+              - label:
+                  styles: nav_label_inactivate
+                  text_font: montserrat_32
+                  text: "Roller Shutter 1"
+                  grid_cell_row_pos: 0
+                  grid_cell_column_pos: 0
+              - obj:
+                  styles: card_md
+                  clickable: true
+                  on_press:
+                    - lvgl.widget.show: cover_modal_container
+                  grid_cell_row_pos: 1
+                  grid_cell_column_pos: 0
+                  grid_cell_x_align: STRETCH
+                  widgets:
+                    - label:
+                        styles: card_md_icon_btn
+                        text_font: extra_icon
+                        text_color: 0xA9A9A9
+                        text: "\U000F024D"
+                    - label:
+                        styles: card_md_main_label
+                        text: "Living Room"
+                    - label:
+                        styles: card_md_sub_label
+                        id: cover_status_label
+                        text: "Unknown"
+        - label:
+            x: 220
+            y: 40
+            text_font: montserrat_48
+            text: "Cover"
