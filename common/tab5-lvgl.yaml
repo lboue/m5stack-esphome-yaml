@@ -362,10 +362,10 @@ lvgl:
                         bg_color: 0xCCE8E7
                       widgets:
                         - label:
-                          align: CENTER
-                          id: cover_btn_icon
-                          styles: nav_icon_inactivate
-                          text: "\U000F024D" # mdi:window-shutter
+                            align: CENTER
+                            id: cover_btn_icon
+                            styles: nav_icon_inactivate
+                            text: "\U000F024D" # mdi:window-shutter
                       on_value:
                         - lambda: id(page_num) = 3;
                         - script.execute: nav_rail_update
