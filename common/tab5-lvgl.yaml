@@ -318,35 +318,6 @@ lvgl:
                       id: light_btn_label
                       text: "Light"
 
-            # Cover (Roller shutter) icon button
-            - obj:
-                styles: nav_btn_container
-                widgets:
-                  - button:
-                      align: CENTER
-                      styles: nav_btn_inactivate
-                      id: cover_panel_btn
-                      checkable: true
-                      state:
-                        checked: false
-                      checked:
-                        bg_color: 0xCCE8E7
-                      widgets:
-                        - label:
-                            align: CENTER
-                            id: cover_btn_icon
-                            styles: nav_icon_inactivate
-                            text: "\U000F024D" # mdi:window-shutter
-                      on_value:
-                        - lambda: id(page_num) = 2;
-                        - script.execute: nav_rail_update
-                      on_press:
-                        - lvgl.page.show: cover_page
-                  - label:
-                      styles: nav_label_inactivate
-                      id: cover_btn_label
-                      text: "Cover"
-
             # Climate (Temp/Humi/AC) icon button
             - obj:
                 styles: nav_btn_container
@@ -367,7 +338,7 @@ lvgl:
                             styles: nav_icon_inactivate
                             text: "\U000F0F55" # mid:air-thermometer-outline
                       on_value:
-                        - lambda: id(page_num) = 3;
+                        - lambda: id(page_num) = 2;
                         - script.execute: nav_rail_update
                       on_press:
                         - lvgl.page.show: climate_page
@@ -375,6 +346,35 @@ lvgl:
                       styles: nav_label_inactivate
                       id: climate_btn_label
                       text: "Climate"
+
+            # Cover (Roller shutter) icon button
+            - obj:
+                styles: nav_btn_container
+                widgets:
+                  - button:
+                      align: CENTER
+                      styles: nav_btn_inactivate
+                      id: cover_panel_btn
+                      checkable: true
+                      state:
+                        checked: false
+                      checked:
+                        bg_color: 0xCCE8E7
+                      widgets:
+                        - label:
+                            align: CENTER
+                            id: cover_btn_icon
+                            styles: nav_icon_inactivate
+                            text: "\U000F024D" # mdi:window-shutter
+                      on_value:
+                        - lambda: id(page_num) = 3;
+                        - script.execute: nav_rail_update
+                      on_press:
+                        - lvgl.page.show: cover_page
+                  - label:
+                      styles: nav_label_inactivate
+                      id: cover_btn_label
+                      text: "Cover"
             
       - obj:
           align: CENTER
