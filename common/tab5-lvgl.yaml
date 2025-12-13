@@ -56,6 +56,7 @@ font:
       "\U000F00DF", # mdi:brightness-6
       "\U000F03D8", # mdi:color-palette
       "\U000F024D", # mdi:window-shutter
+      "\U000F0391", # mdi:blinds
       "\U000F0F7D", # mdi:pause
     ]
 
@@ -365,7 +366,7 @@ lvgl:
                             align: CENTER
                             id: cover_btn_icon
                             styles: nav_icon_inactivate
-                            text: "\U000F024D" # mdi:window-shutter
+                            text: "\U000F0391" # mdi:blinds
                       on_value:
                         - lambda: id(page_num) = 3;
                         - script.execute: nav_rail_update
@@ -1286,7 +1287,7 @@ lvgl:
                         styles: card_md_icon_btn
                         text_font: extra_icon
                         text_color: 0xA9A9A9
-                        text: "\U000F024D"
+                        text: "\U000F0391"
                     - label:
                         styles: card_md_main_label
                         text: "Living Room"
