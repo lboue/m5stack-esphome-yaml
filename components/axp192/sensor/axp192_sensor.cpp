@@ -48,7 +48,7 @@ void AXP192Sensor::update() {
 
     if(battery_power_sensor_ != nullptr) {
         reading = this->parent_->getBattPower();
-        battery_power_sensor_->publish_state(reading == 0 ? NAN : reading);
+        battery_power_sensor_->publish_state(reading);
     }
 
     if(battery_charge_current_sensor_ != nullptr) {
