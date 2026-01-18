@@ -28,7 +28,7 @@ void AXP192Sensor::update() {
 
     if(usb_current_sensor_ != nullptr) {
         reading = this->parent_->getACINCurrent();
-        usb_current_sensor_->publish_state(reading == 0 ? NAN : reading * 1000);
+        usb_current_sensor_->publish_state(reading * 1000);
     }
 
     if(vbus_voltage_sensor_ != nullptr) {
@@ -38,7 +38,7 @@ void AXP192Sensor::update() {
 
     if(vbus_current_sensor_ != nullptr) {
         reading = this->parent_->getACINCurrent();
-        vbus_current_sensor_->publish_state(reading == 0 ? NAN : reading * 1000);
+        vbus_current_sensor_->publish_state(reading * 1000);
     }
 
     if(internal_temperature_sensor_ != nullptr) {
@@ -53,12 +53,12 @@ void AXP192Sensor::update() {
 
     if(battery_charge_current_sensor_ != nullptr) {
         reading = this->parent_->getBattChargeCurrent();
-        battery_charge_current_sensor_->publish_state(reading == 0 ? NAN : reading * 1000);
+        battery_charge_current_sensor_->publish_state(reading * 1000);
     }
 
     if(battery_discharge_current_sensor_ != nullptr) {
         reading = this->parent_->getBattDischargeCurrent();
-        battery_discharge_current_sensor_->publish_state(reading == 0 ? NAN : reading * 1000);
+        battery_discharge_current_sensor_->publish_state(reading * 1000);
     }
 
     if(aps_voltage_sensor_ != nullptr) {
