@@ -18,6 +18,9 @@ psram:  # Need to include this so logs will display PSRAM detected, note only 4M
 
 api:
 
+ota:
+  - platform: esphome
+
 wifi:
   networks:
     - ssid: !secret wifi_ssid
