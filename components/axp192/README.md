@@ -8,7 +8,6 @@ substitutions:
 
 esphome:
   name: ${esphome_name}
-  build_path: C:/EsphomeTemp/${esphome_name}
 
 esp32:
   board: m5stack-core2
@@ -51,10 +50,9 @@ spi:
   miso_pin: 38
 
 external_components:
-  - source: C:\Users\jims9\OneDrive\Documents\ESPComponents\esphome-yaml\components
-  # - source: github://jimwsmith/esphome-yaml/components
+  - source: github://jimwsmith/esphome-yaml/components
     components: [ axp192 ]
-    refresh: 0s
+    refresh: 1h
 
 axp192:
   id: axp192_pmu
