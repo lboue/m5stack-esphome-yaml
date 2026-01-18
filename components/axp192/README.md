@@ -16,6 +16,12 @@
 
 ### Diagram
 
+- https://m5stack.lang-ship.com/howto/m5unified/axp192/
+
+<img width="2311" height="1892" alt="image" src="https://github.com/user-attachments/assets/7a5de030-c6c8-4185-8e24-1589730249ad" />
+
+
+**Text diagram**
 
              USB-C (5V)
                   │
