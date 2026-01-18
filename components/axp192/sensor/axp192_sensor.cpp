@@ -47,9 +47,13 @@ void AXP192Sensor::update() {
     }
 
     if(battery_power_sensor_ != nullptr) {
+        // Try native power reading; if zero, derive from V * (Idischarge - Icharge)
         reading = this->parent_->getBattPower();
-        if (this->parent_->isCharging()) {
-            reading = -reading;
+        if (reading == 0) {
+            const float vbatt = this->parent_->getBattVoltage();
+            const float idis = this->parent_->getBattDischargeCurrent();  // A
+            const float ichg = this->parent_->getBattChargeCurrent();      // A
+            reading = vbatt * (idis - ichg);  // W; negative when charging
         }
         battery_power_sensor_->publish_state(reading);
     }
