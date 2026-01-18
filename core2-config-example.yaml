@@ -44,7 +44,7 @@ external_components:
   # - source: github://jimwsmith/esphome-yaml/components
   - source: github://lboue/m5stack-esphome-yaml@feature/axp192-current-in-mA
     components: [axp192]
-    refresh: 0s
+    refresh: always
 
 axp192:
   id: axp192_pmu
