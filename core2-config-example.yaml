@@ -203,16 +203,7 @@ touchscreen:
 
 display:
   - platform: mipi_spi
-    id: m5core_lcd
-    model: M5CORE
-    dc_pin:
-      number: GPIO15
-      ignore_strapping_warning: true
-    cs_pin:
-      number: GPIO5
-      ignore_strapping_warning: true
-    data_rate: 40MHz
-    invert_colors: true
+    model: M5CORE2
     show_test_card: true
 
 light:
