@@ -55,6 +55,12 @@ font:
       "\U000F0374", # mdi:minus
       "\U000F00DF", # mdi:brightness-6
       "\U000F03D8", # mdi:color-palette
+      "\U000F00AC", # mdi:blinds
+      "\U000F111C", # mdi:window-shutter
+      "\U000F111E", # mdi:window-shutter-open
+      "\U000F0738", # mdi:arrow-up-bold-box
+      "\U000F072F", # mdi:arrow-down-bold-box
+      "\U000F04DB", # mdi:stop
     ]
 
   # larger icon
@@ -348,7 +354,36 @@ lvgl:
                       styles: nav_label_inactivate
                       id: climate_btn_label
                       text: "Climate"
-            
+
+            # Cover (blinds/curtain) icon button
+            - obj:
+                styles: nav_btn_container
+                widgets:
+                  - button:
+                      align: CENTER
+                      styles: nav_btn_inactivate
+                      id: cover_panel_btn
+                      checkable: true
+                      state:
+                        checked: false
+                      checked:
+                        bg_color: 0xCCE8E7
+                      widgets:
+                        - label:
+                            id: cover_btn_icon
+                            align: CENTER
+                            styles: nav_icon_inactivate
+                            text: "\U000F00AC" # mdi:blinds
+                      on_value:
+                        - lambda: id(page_num) = 3;
+                        - script.execute: nav_rail_update
+                      on_press:
+                        - lvgl.page.show: cover_page
+                  - label:
+                      styles: nav_label_inactivate
+                      id: cover_btn_label
+                      text: "Cover"
+
       - obj:
           align: CENTER
           id: light_card_modal_container
@@ -533,6 +568,131 @@ lvgl:
                               - lvgl.widget.hide: light_slider
                               - lvgl.widget.show: color_palette_canvas
                               - lvgl.widget.show: color_palette_indicator
+      - obj:
+          align: CENTER
+          id: cover_card_modal_container
+          styles: modal_container
+          clickable: true
+          hidden: true # default hidden
+          on_press:
+            - lvgl.widget.hide: cover_card_modal_container
+          widgets:
+            - obj:
+                styles: card_lg
+                widgets:
+                  # close button
+                  - button:
+                      styles: card_lg_icon_btn_transp
+                      align: TOP_LEFT
+                      widgets:
+                        - label:
+                            text_color: 0x3F4948
+                            text_font: extra_icon
+                            text: "\U000F0156"
+                            align: CENTER
+                      on_press:
+                        - lvgl.widget.hide: cover_card_modal_container
+                  - label:
+                      id: cover_state_label
+                      text_font: montserrat_48
+                      align: TOP_MID
+                      y: 30
+                      text: "Closed"
+                  # Position adjust slider (0 = closed, 100 = open)
+                  - slider:
+                      align: CENTER
+                      width: 130
+                      height: 360
+                      radius: 42
+                      min_value: 0
+                      max_value: 100
+                      id: cover_position_slider
+                      bg_color: 0xECECEC # Default inactivate color
+                      bg_opa: COVER
+                      indicator:
+                        radius: 12
+                        bg_color: 0x4C96EE
+                      knob:
+                        bg_opa: TRANSP
+                      on_release:
+                        - homeassistant.action:
+                            action: cover.set_cover_position
+                            data:
+                              entity_id: cover.demo_cover
+                              position: !lambda return int(x);
+                        - lvgl.label.update:
+                            id: cover_position_label
+                            text: !lambda |-
+                              return std::to_string(int(x)) + " %";
+                  - label:
+                      id: cover_position_label
+                      text_font: montserrat_24
+                      align: CENTER
+                      y: 110
+                      text: "0 %"
+                  # Button group: open / stop / close
+                  - obj:
+                      width: 280
+                      height: 84
+                      radius: 50
+                      scrollable: false
+                      align: BOTTOM_MID
+                      bg_color: 0xF3F4F4
+                      border_opa: TRANSP
+                      layout:
+                        type: flex
+                        flex_align_main: CENTER
+                        flex_align_cross: CENTER
+                        flex_align_track: CENTER
+                      widgets:
+                        - button:
+                            id: cover_open_btn
+                            styles: card_md_icon_btn
+                            bg_opa: TRANSP
+                            widgets:
+                              - label:
+                                  text_color: 0x3F4948
+                                  text_font: extra_icon
+                                  text: "\U000F0738" # mdi:arrow-up-bold-box
+                                  align: CENTER
+                            on_short_click:
+                              - logger.log: "Open the cover!"
+                              - homeassistant.action:
+                                  action: cover.open_cover
+                                  data:
+                                    entity_id: cover.demo_cover
+                        - button:
+                            id: cover_stop_btn
+                            styles: card_md_icon_btn
+                            bg_opa: TRANSP
+                            widgets:
+                              - label:
+                                  align: CENTER
+                                  text_color: 0x3F4948
+                                  text_font: extra_icon
+                                  text: "\U000F04DB" # mdi:stop
+                            on_short_click:
+                              - logger.log: "Stop the cover!"
+                              - homeassistant.action:
+                                  action: cover.stop_cover
+                                  data:
+                                    entity_id: cover.demo_cover
+                        - button:
+                            id: cover_close_btn
+                            styles: card_md_icon_btn
+                            bg_opa: TRANSP
+                            widgets:
+                              - label:
+                                  align: CENTER
+                                  text_color: 0x3F4948
+                                  text_font: extra_icon
+                                  text: "\U000F072F" # mdi:arrow-down-bold-box
+                            on_short_click:
+                              - logger.log: "Close the cover!"
+                              - homeassistant.action:
+                                  action: cover.close_cover
+                                  data:
+                                    entity_id: cover.demo_cover
       - obj:
           align: TOP_RIGHT
           id: status_bar
@@ -964,6 +1124,57 @@ lvgl:
             y: 40
             text_font: montserrat_48
             text: "Lights"
+
+    - id: cover_page
+      widgets:
+        - obj:
+            styles: content_container
+            layout:
+              type: grid
+              grid_rows: [fr(10), fr(30), fr(30), fr(30)]
+              grid_columns: [fr(1), fr(1)]
+              pad_row: 24
+              pad_column: 24
+
+            widgets:
+              - label:
+                  styles: nav_label_inactivate
+                  text_font: montserrat_32
+                  text: "Room"
+                  grid_cell_row_pos: 0
+                  grid_cell_column_pos: 0
+              - obj:
+                  id: demo_cover_click_area
+                  styles: card_sm
+                  grid_cell_row_pos: 1
+                  grid_cell_column_pos: 0
+                  grid_cell_x_align: STRETCH
+                  clickable: true
+                  on_press:
+                    - logger.log: "Demo Cover Area Clicked!"
+                    - lvgl.widget.show: cover_card_modal_container
+                  widgets:
+                    - obj:
+                        styles: card_sm_icon_btn
+                        widgets:
+                          - label:
+                              id: demo_cover_label
+                              text_font: extra_icon
+                              text_color: 0X9E9E9E
+                              text: "\U000F111C" # mdi:window-shutter
+                              align: CENTER
+                    - label:
+                        styles: card_sm_main_label
+                        text: "Curtain 1"
+                    - label:
+                        styles: card_sm_sub_label
+                        id: demo_cover_status
+                        text: "CLOSED"
+        - label:
+            x: 220
+            y: 40
+            text_font: montserrat_48
+            text: "Cover"
 
     - id: climate_page
       widgets:

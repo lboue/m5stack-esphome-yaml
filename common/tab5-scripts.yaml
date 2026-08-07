@@ -9,7 +9,8 @@ script:
           std::vector<lv_obj_t*> btns = {
             id(dash_panel_btn),
             id(climate_panel_btn),
-            id(light_panel_btn)
+            id(light_panel_btn),
+            id(cover_panel_btn)
           };
           for (auto* btn : btns) {
             lv_obj_set_ext_click_area(btn, 180);
@@ -22,30 +23,35 @@ script:
     then:
       - lambda: |-
           const int active = id(page_num);
-          lv_obj_t* buttons[] = { 
-              id(dash_panel_btn), 
-              id(light_panel_btn), 
-              id(climate_panel_btn), 
+          lv_obj_t* buttons[] = {
+              id(dash_panel_btn),
+              id(light_panel_btn),
+              id(climate_panel_btn),
+              id(cover_panel_btn),
           };
-          lv_obj_t* icons[] = { 
-              id(dash_btn_icon), 
-              id(light_btn_icon), 
-              id(climate_btn_icon), 
+          lv_obj_t* icons[] = {
+              id(dash_btn_icon),
+              id(light_btn_icon),
+              id(climate_btn_icon),
+              id(cover_btn_icon),
           };
-          lv_obj_t* labels[] = { 
-              id(dash_btn_label), 
-              id(light_btn_label), 
-              id(climate_btn_label), 
+          lv_obj_t* labels[] = {
+              id(dash_btn_label),
+              id(light_btn_label),
+              id(climate_btn_label),
+              id(cover_btn_label),
           };
           const char* icon_unchecked[] = {
               "\U000F0A1D", // dashboard-outline
               "\U000F0336", // lightbulb-outline
               "\U000F0F55", // thermometer
+              "\U000F111C", // window-shutter (closed)
           };
           const char* icon_checked[] = {
               "\U000F056E", // dashboard
               "\U000F0335", // lightbulb
               "\U000F0F54", // thermometer
+              "\U000F111E", // window-shutter-open
           };
 
           const int count = sizeof(buttons) / sizeof(buttons[0]);
@@ -129,7 +135,7 @@ script:
               float val = 1.0f;  // fixed brightness
 
               lv_color_t c = hsv_to_rgb(hue, sat, val);
-              lv_canvas_set_px(canvas, x, y, c);
+              lv_canvas_set_px(canvas, x, y, c, LV_OPA_COVER);
             }
           };
   # This script was used to draw a custom 'indicator' on color palette
@@ -148,7 +154,7 @@ script:
     then:
       - lambda: |-
           lv_obj_add_event_cb(id(color_palette_indicator), [](lv_event_t * e){
-            lv_obj_t * obj = lv_event_get_target(e);
+            lv_obj_t * obj = (lv_obj_t *) lv_event_get_target(e);
 
             lv_indev_t * indev = lv_indev_get_act();
             if(indev == NULL)  return;
