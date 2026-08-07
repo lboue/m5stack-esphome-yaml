@@ -515,6 +515,91 @@ text_sensor:
     on_value:
       - lambda: id(sync_ha_palette)->execute(x);
 
+  # Cover / Curtain Information
+  # NOTE: replace `cover.demo_cover` with the entity_id of your own
+  # cover (blinds, curtain, garage door, ...) entity in Home Assistant.
+  - platform: homeassistant
+    id: demo_cover
+    entity_id: cover.demo_cover
+    on_value:
+      - lvgl.widget.update:
+          id: demo_cover_click_area
+          clickable: !lambda return !((x == "unavailable") || (x == "unknown"));
+      - lvgl.label.update:
+          id: demo_cover_label
+          text_color: !lambda |-
+            if ( x == "open" ) {
+                return lv_color_hex(0x4C96EE);
+            } else {
+                return lv_color_hex(0x9E9E9E);
+            }
+          text: !lambda |-
+              static char buf[10];
+              std::string icon;
+              if ( x == "open" ) {
+                  icon = "\U000F111E";  // window-shutter-open
+              } else {
+                  icon = "\U000F111C";  // window-shutter
+              }
+              snprintf(buf, sizeof(buf), "%s", icon.c_str());
+              return buf;
+      - lvgl.label.update:
+          id: demo_cover_status
+          text: !lambda |-
+              static char buf[12];
+              std::string text;
+              if ( x == "open" ) {
+                  text = "OPEN";
+              }
+              else if ( x == "closed" ) {
+                  text = "CLOSED";
+              }
+              else if ( x == "opening" ) {
+                  text = "OPENING";
+              }
+              else if ( x == "closing" ) {
+                  text = "CLOSING";
+              }
+              else if ( x == "unavailable" || x == "unknown" ) {
+                  text = "UNKNOWN";
+              }
+              else {
+                  text = "-";
+              }
+              snprintf(buf, sizeof(buf), "%s", text.c_str());
+              return buf;
+      - lvgl.label.update:
+          id: cover_state_label
+          text: !lambda |-
+              std::string s = x;
+              if (!s.empty()) s[0] = toupper(s[0]);
+              return s;
+
+  - platform: homeassistant
+    id: demo_cover_position
+    entity_id: cover.demo_cover
+    attribute: current_position
+    on_value:
+      - lvgl.slider.update:
+          id: cover_position_slider
+          value: !lambda |-
+            if (x.empty() || x == "None" ||
+                x == "null" || x == "unknown"
+                || x == "unavailable")
+                return 0;
+
+            return std::stoi(x);
+      - lvgl.label.update:
+          id: cover_position_label
+          text: !lambda |-
+            if ( x.empty() || x == "None" || x == "null"
+                 || x == "unknown" || x == "unavailable" ) {
+                return std::string("unavailable");
+            }
+            else {
+              return x + " %";
+            }
+
   - platform: homeassistant
     id: iqa_text_value
     entity_id: sensor.env_iv_kit_bme68x_iaq_classification
